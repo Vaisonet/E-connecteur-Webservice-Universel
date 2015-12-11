@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="connecteur" type="connecteurType"/>
+    <xs:complexType name="livraisonType">
+	<xs:sequence>
+	    <xs:element name="pays">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+	    <xs:element type="xs:string" name="company"/>
+	    <xs:element type="xs:string" name="lastname"/>
+	    <xs:element type="xs:string" name="firstname"/>
+	    <xs:element type="xs:string" name="address1"/>
+	    <xs:element type="xs:string" name="address2"/>
+	    <xs:element type="xs:string" name="postcode"/>
+	    <xs:element type="xs:string" name="city"/>
+	    <xs:element type="xs:string" name="phone"/>
+	    <xs:element type="xs:string" name="phone_mobile"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="facturationType">
+	<xs:sequence>
+	    <xs:element name="pays">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+	    <xs:element type="xs:string" name="company"/>
+	    <xs:element type="xs:string" name="lastname"/>
+	    <xs:element type="xs:string" name="firstname"/>
+	    <xs:element type="xs:string" name="address1"/>
+	    <xs:element type="xs:string" name="address2"/>
+	    <xs:element type="xs:string" name="postcode"/>
+	    <xs:element type="xs:string" name="city"/>
+	    <xs:element type="xs:string" name="phone"/>
+	    <xs:element type="xs:string" name="phone_mobile"/>
+	    <xs:element type="xs:string" name="vat_number"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="clientType">
+	<xs:sequence>
+	    <xs:element type="xs:byte" name="id"/>
+	    <xs:element type="xs:string" name="lastname"/>
+	    <xs:element type="xs:string" name="firstname"/>
+	    <xs:element type="xs:string" name="email"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="commandeType">
+	<xs:sequence>
+	    <xs:element name="date_add">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+	    <xs:element type="xs:string" name="payment">
+	    </xs:element>
+	    <xs:element type="xs:float" name="total_discounts"/>
+	    <xs:element type="xs:float" name="total_discounts_tax_incl"/>
+	    <xs:element type="xs:float" name="total_discounts_tax_excl"/>
+	    <xs:element type="xs:float" name="total_paid"/>
+	    <xs:element type="xs:float" name="total_products"/>
+	    <xs:element type="xs:float" name="total_products_wt"/>
+	    <xs:element type="xs:float" name="total_shipping"/>
+	    <xs:element type="xs:float" name="carrier_tax_rate"/>
+	    <xs:element type="xs:string" name="livreur"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="productType">
+	<xs:sequence>
+	    <xs:element type="xs:string" name="product_reference"/>
+	    <xs:element type="xs:byte" name="product_quantity"/>
+	    <xs:element type="xs:string" name="product_name"/>
+	    <xs:element type="xs:float" name="product_price"/>
+	    <xs:element type="xs:float" name="tva_rate"/>
+	    <xs:element type="xs:float" name="ecotax"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="produitsType">
+	<xs:sequence>
+	    <xs:element type="productType" name="product" maxOccurs="unbounded" minOccurs="0"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="orderType">
+	<xs:sequence>
+	    <xs:element type="livraisonType" name="livraison"/>
+	    <xs:element type="facturationType" name="facturation"/>
+	    <xs:element type="clientType" name="client"/>
+	    <xs:element type="commandeType" name="commande"/>
+	    <xs:element type="produitsType" name="produits"/>
+	</xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="connecteurType">
+	<xs:sequence>
+	    <xs:element type="orderType" name="order"/>
+	</xs:sequence>
+    </xs:complexType>
+</xs:schema>
