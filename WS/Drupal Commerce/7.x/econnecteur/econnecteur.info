@@ -1,0 +1,6 @@
+name = Econnecteur
+description = Alter hooks for Services 
+package = Vaisonet
+version = 7.x-1.x
+core = 7.x
+;files[] = 

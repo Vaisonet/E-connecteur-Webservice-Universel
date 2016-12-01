@@ -1,0 +1,504 @@
+<?php
+
+global $eFields;
+  
+$eFields = array(
+  'no_map',
+  'EAN13',
+  'UPC',
+  'largeur',
+  'hauteur',
+  'profondeur',
+  'p_vente',
+  'nom',
+  'meta_description',
+  'meta_keywords',
+  'meta_title',
+  'desc_long',
+  'desc_courte',
+  'tva',
+  'ecotaxe',
+  'stock',
+  'poids',
+  'actif',
+  'disponible',
+);  
+
+function econnecteur_menu() {
+  $items = array();
+  $items['admin/config/econnecteur'] = array(
+    'title' => 'Administer Econnector',
+    'description' => 'Administer Econnector',
+    'page callback' => 'econnector_home',
+    'access arguments' => array('administer econnector'),
+    'type' => MENU_LOCAL_TASK,       
+  );
+  $items['admin/config/econnecteur/test'] = array(
+    'title' => 'Test Econnector',
+    'description' => 'Test Econnector',
+    'page callback' => 'econnecteur_test',
+    'access arguments' => array('administer econnector'),
+    'type' => MENU_LOCAL_TASK,       
+  );
+  return $items;  
+}  
+
+function rest_connect(){
+	$request_url = 'http://localhost/caviar/econnecteur/user/login';
+	$username = 'admin';
+	$password = 'caviarperlenoire';	
+	$user_data = array(
+	'username' => $username,
+	'password' => $password,
+	);
+	$user_data = http_build_query($user_data);
+
+	$curl = curl_init($request_url);
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json')); // Accept JSON response
+	curl_setopt($curl, CURLOPT_POST, 1); // Do a regular HTTP POST
+	curl_setopt($curl, CURLOPT_POSTFIELDS, $user_data); // Set POST data
+	curl_setopt($curl, CURLOPT_HEADER, FALSE);  // Ask to not return Header
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
+	curl_setopt($curl, CURLOPT_COOKIESESSION, true);
+
+	$response = curl_exec($curl);
+	$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	if ($http_code == 200) {
+	$logged_user = json_decode($response);
+		return  $logged_user ;
+	}
+	else {
+		$http_message = curl_error($curl);
+		return $http_message ;
+	}
+	curl_close($curl); 
+}
+
+function rest_post_data($logged_user){
+	/*
+	* Server REST - product.update
+	*/
+	// REST Server URL
+	$request_url = 'http://localhost/caviar/econnecteur/product/68';
+  $product_data = array ('title' => 'toto');  
+	$product_data = http_build_query($product_data);
+	// Define cookie session
+	$cookie_session = $logged_user->session_name . '=' . $logged_user->sessid;
+	// cURL
+	$curl = curl_init($request_url);  
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json', 'X-CSRF-Token: ' . $logged_user->token)); // Accept JSON response
+  curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+  curl_setopt($curl, CURLOPT_HEADER, false);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, $product_data); // Set POST data
+	curl_setopt($curl, CURLOPT_HEADER, FALSE);  // Ask to not return Header
+	curl_setopt($curl, CURLOPT_COOKIE, "$cookie_session"); // use the previously saved session
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
+	$response = curl_exec($curl);
+	$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	// Check if login was successful
+	if ($http_code == 200) {
+		// Convert json response as array
+		$node = json_decode($response);
+		return $node;
+	}
+	else {
+		// Get error msg
+		$http_message = curl_error($curl);
+		return $http_message;
+	}
+	  
+/*
+  $product_data = array (
+    'sku' => 'WEBSRV0003', 
+    'title' => 'A product created with services 3.x and REST server 2', 
+    'status' => 1, 
+    'type' => 'product', 
+	  'commerce_price_amount' => 5555,
+	  'commerce_price_currency_code' => 'EUR',
+	  'field_body' => array(
+	    'value' => 'Lorem ipsum dolor sit amet',
+	    'summary' => 'Lorem court',
+	    'format' => 'full_html',
+	   ),
+	   'status' => TRUE,
+      // add extra product fields here
+  );
+	$product_data = http_build_query($product_data);
+	// Define cookie session
+	$cookie_session = $logged_user->session_name . '=' . $logged_user->sessid;
+	// cURL
+	$curl = curl_init($request_url);
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json', 'X-CSRF-Token: ' . $logged_user->token)); // Accept JSON response
+	curl_setopt($curl, CURLOPT_POST, 1); // Do a regular HTTP POST
+	curl_setopt($curl, CURLOPT_POSTFIELDS, $product_data); // Set POST data
+	curl_setopt($curl, CURLOPT_HEADER, FALSE);  // Ask to not return Header
+	curl_setopt($curl, CURLOPT_COOKIE, "$cookie_session"); // use the previously saved session
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
+	$response = curl_exec($curl);
+	$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	// Check if login was successful
+	if ($http_code == 200) {
+		// Convert json response as array
+		$node = json_decode($response);
+		return $node;
+	}
+	else {
+		// Get error msg
+		$http_message = curl_error($curl);
+		return $http_message;
+	}
+*/
+}
+
+function econnecteur_test() {
+  $logdata = rest_connect();
+//   dpm($logdata);
+  $node = rest_post_data($logdata);
+
+  dpm($node);
+    return 'OK';
+}
+
+function econnector_home() {
+
+  $form = drupal_get_form('econnecteur_product_fields_form');
+
+  $output = drupal_render($form);
+  
+  return $output;  
+}
+
+function econnecteur_product_fields_form() {
+  
+  drupal_add_css(drupal_get_path('module', 'econnecteur') . '/econnecteur.css');  
+  
+  global $eFields;
+  
+  $prefs = unserialize(variable_get('econnecteur_prefs_products'));
+  
+  $bundles = db_query('SELECT DISTINCT(bundle) name FROM {field_config_instance} WHERE entity_type = \'commerce_product\'');
+  
+  $fields = db_query('SELECT field_name, bundle FROM {field_config_instance} WHERE entity_type = \'commerce_product\' ORDER BY entity_type');
+
+  $form = array();
+
+  $form['product_types'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Product Types'),  
+    '#tree' => TRUE,  
+  );          
+  
+  foreach($bundles as $bundle) {
+    $form['product_types'][$bundle->name] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Produit : ' . $bundle->name,  
+      '#tree' => TRUE,  
+    );          
+    $form['product_types'][$bundle->name]['sku'] = array(
+      '#type' => 'select',
+      '#title' => 'sku',
+      '#options' => array_combine($eFields, $eFields),
+      '#tree' => TRUE,      
+      '#default_value' => isset($prefs[$bundle->name]['sku']) ? $prefs[$bundle->name]['sku'] : 'no_map',    
+    );    
+    $form['product_types'][$bundle->name]['title'] = array(
+      '#type' => 'select',
+      '#title' => 'title',
+      '#options' => array_combine($eFields, $eFields),
+      '#tree' => TRUE,      
+      '#default_value' => isset($prefs[$bundle->name]['title']) ? $prefs[$bundle->name]['title'] : 'no_map',    
+    );    
+  }
+  
+  foreach ($fields as $field) {  
+    if (isset($prefs[$field->bundle][$field->field_name])) {
+      $default = $prefs[$field->bundle][$field->field_name];
+    } else {
+      $default = null;
+    }
+    $form['product_types'][$field->bundle][$field->field_name] = array(
+      '#type' => 'select',
+      '#title' => $field->field_name,
+      '#options' => array_combine($eFields, $eFields),
+      '#tree' => TRUE,      
+      '#default_value' => $default,
+    );        
+  }
+  
+  $prefs = unserialize(variable_get('econnecteur_prefs_order'));
+
+  $produit = db_query('SELECT product_id FROM {commerce_product} ORDER BY product_id ASC LIMIT 0,1')->fetchObject();
+  
+  $p = commerce_product_load($produit->product_id);
+  
+  $structure = var_export($p, TRUE);
+  
+  $form['structures'] = array (
+    '#type' => 'container',
+    '#title' => 'Data structures',
+  );
+  $form['structures']['product'] = array (
+    '#type' => 'textarea',
+    '#title' => 'Product',
+    '#rows' => 20,
+    '#default_value' => $structure,
+  );
+/*
+  $fields = db_query('SELECT field_name FROM {field_config_instance} WHERE entity_type = \'commerce_order\' ORDER BY field_name');
+    
+  $form['order'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Orders preferences'),  
+    '#tree' => TRUE,  
+  ); 
+  
+  foreach ($fields as $field) {  
+    if (isset($prefs[$field->field_name])) {
+      $default = $prefs[$field->field_name];
+    } else {
+      $default = null;
+    }
+    $form['order'][$field->field_name] = array(
+      '#type' => 'select',
+      '#title' => $field->field_name,
+      '#options' => array_combine($eFields, $eFields),
+      '#tree' => TRUE,      
+      '#default_value' => $default,
+    );        
+  }
+*/
+        
+
+/*
+  $form['#attached']['css'] = array(
+    drupal_get_path('module', 'econnecteur') . '/econnecteur.css',
+  );
+*/
+          
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save E-Connecteur preferences'),  
+  );    
+    
+  return $form;
+}
+
+function econnecteur_product_fields_form_submit($form, &$form_state) {
+//   dpm($form_state['values']);
+  variable_set('econnecteur_prefs_products', serialize($form_state['values']['product_types']));
+  variable_set('econnecteur_prefs_order', serialize($form_state['values']['order']));
+}
+
+
+/**
+ * Alter results of the services call.
+ *
+ * @param $controller
+ *   Controller definition
+ * @param array $args
+ *   Arguments passed to services callback
+ * @param array $result
+ *   Array of results that can be altered
+ *
+ * @see services_controller_execute()
+ * @see services.runtime.inc
+ */
+function econnecteur_services_request_postprocess_alter($controller, $args, &$result) {
+
+  global $eFields;
+  
+//   dd(array_keys($result));
+  if (is_array($result)) {
+    $prefs = unserialize(variable_get('econnecteur_prefs_products'));
+   
+    // Sample result
+    $test = reset($result);
+    
+    // Products ?
+/*
+    if (isset($test->product_id)) {    
+       // Filtrer selon Page choix champs produit
+      $products = array();
+      foreach($result as $id => $product) {
+        $products[$id] = new stdClass;
+        $pprefs = $prefs[$product->type];
+        foreach ($product as $field => $value) {
+          if (in_array($field, array_keys($pprefs)) && $pprefs[$field] <> 'no_map') {
+            $new_field = $pprefs[$field];
+            $products[$id]->{$new_field} = $value;        
+          }
+        }
+      }  
+      $result = $products;
+    }
+*/
+
+    if (isset($test->product_id)) {    
+       // Filtrer selon Page choix champs produit
+      $products = array();
+      foreach($result as $id => $product) {
+        $products[$id] = new stdClass;
+        $products[$id]->id = $product->product_id;
+        $products[$id]->reference = $product->sku;      }  
+      $result = $products;
+    }
+      
+    $prefs = unserialize(variable_get('econnecteur_prefs_order'));
+  
+    // Orders ?
+    if (isset($test->order_id)) {    
+      foreach($result as $id => $order) {
+        $orders[$id] = new stdClass;
+        $orders[$id]->id = $order->order_id;
+        $orders[$id]->current_state = $order->status;
+      }
+      $result = $orders;      
+    }    
+
+/*
+    if (isset($test->order_id)) {    
+       // Filtrer selon Page choix champs commandes
+      $orders = array();
+      foreach($result as $id => $order) {
+        $orders[$id] = new stdClass;
+        foreach ($order as $field => $value) {
+          if (in_array($field, array_keys($prefs))) {
+            $new_field = $prefs[$field];
+            $orders[$id]->{$new_field} = $value;        
+          }
+        }
+      }  
+      $result = $orders;
+    }
+*/
+  }
+  
+  // TODO : individual result
+  // Only one order
+
+  if (isset($result->order_id)) {
+    // Remove unneeded data
+//     unset($result->data);
+    unset($result->log);
+    // Modify data names and formats
+//     unset($result->created);
+    $livraison = array_pop($result->commerce_customer_shipping_entities);
+    $result->livraison = $livraison->commerce_customer_address;
+    $result->livraison['pays'] = $livraison->commerce_customer_address['country'];
+    $result->livraison['company'] = $livraison->commerce_customer_address['company'];
+    $result->livraison['lastname'] = $livraison->commerce_customer_address['last_name'];
+    $result->livraison['firstname'] = $livraison->commerce_customer_address['first_name'];
+    $result->livraison['address1'] = $livraison->commerce_customer_address['thoroughfare'];
+    $result->livraison['address2'] = $livraison->commerce_customer_address['premise'];
+    $result->livraison['city'] = $livraison->commerce_customer_address['locality'];
+    $result->livraison['phone'] = $livraison->commerce_customer_address[''];
+    $result->livraison['phone_mobile'] = $livraison->commerce_customer_address[''];
+
+    unset($result->livraison['country']);
+    unset($result->livraison['organisation_name']);
+    unset($result->livraison['last_name']);
+    unset($result->livraison['first_name']);
+    unset($result->livraison['thoroughfare']);
+    unset($result->livraison['premise']);
+    unset($result->livraison['locality']);
+    unset($result->livraison['dependent_locality']);
+    unset($result->livraison['administrative_area']);
+    unset($result->livraison['sub_administrative_area']);
+    unset($result->livraison['sub_premise']);
+    unset($result->livraison['company']);
+    unset($result->livraison['data']);
+
+    $facturation = array_pop($result->commerce_customer_billing_entities);
+    $result->facturation = $facturation->commerce_customer_address; 
+
+    $result->facturation = $facturation->commerce_customer_address;
+    $result->facturation['pays'] = $facturation->commerce_customer_address['country'];
+    $result->facturation['company'] = $facturation->commerce_customer_address['company'];
+    $result->facturation['lastname'] = $facturation->commerce_customer_address['last_name'];
+    $result->facturation['firstname'] = $facturation->commerce_customer_address['first_name'];
+    $result->facturation['address1'] = $facturation->commerce_customer_address['thoroughfare'];
+    $result->facturation['address2'] = $facturation->commerce_customer_address['premise'];
+    $result->facturation['city'] = $facturation->commerce_customer_address['locality'];
+    $result->facturation['phone'] = $facturation->commerce_customer_address[''];
+    $result->facturation['phone_mobile'] = $facturation->commerce_customer_address[''];
+
+    unset($result->facturation['country']);
+    unset($result->facturation['organisation_name']);
+    unset($result->facturation['last_name']);
+    unset($result->facturation['first_name']);
+    unset($result->facturation['thoroughfare']);
+    unset($result->facturation['premise']);
+    unset($result->facturation['locality']);
+    unset($result->facturation['dependent_locality']);
+    unset($result->facturation['administrative_area']);    
+    unset($result->facturation['sub_administrative_area']);
+    unset($result->facturation['sub_premise']);
+    unset($result->facturation['company']);
+    unset($result->facturation['data']);    
+    
+    // Customer info
+//     $user = user_load($result->uid);
+    $client = new stdClass;
+    $client->id = $result->uid;
+    $client->lastname = $facturation->commerce_customer_address['last_name'];
+    $client->firstname = $facturation->commerce_customer_address['first_name'];
+    $client->email = $user->mail;
+    $result->client = $client;
+    // Reformat line items to econnecteur product lines
+    $result->produits = array();
+    foreach ($result->commerce_line_items_entities as $id => $product) {
+      if (! $product->commerce_shipping_service) {
+        $result->produits[$id] = new stdClass;
+        $result->produits[$id]->product_reference = $product->line_item_label;
+        $result->produits[$id]->product_quantity = $product->quantity;
+        $result->produits[$id]->product_name = $product->line_item_title;
+        $result->produits[$id]->product_price = $product->commerce_unit_price['amount'] / 100;
+        $result->produits[$id]->product_tva_rate = $product->commerce_unit_price['data']['components'][1]['price']['data']['tax_rate']['rate'];
+        $result->produits[$id]->product_ecotax = '';
+      }
+    }
+
+    // Order info
+    $order = new stdClass;
+    $order->currency = $result->commerce_order_total['currency_code'];
+    $order->payment = $result->data['atos']['payment_method']['title'];
+    $order->total_discounts = '';
+    $order->total_discounts_tax_included = '';
+    $order->total_discounts_tax_excluded = '';
+    $order->total_paid = $result->commerce_order_total['amount'] / 100;
+    $order->total_paid_wt = $result->commerce_order_total['data']['components'][0]['price']['amount'] / 100;
+    
+    // Find shipping line item and calculate order total
+    $total_products = 0;
+    $total_products_wt = 0;
+    foreach ($result->commerce_line_items_entities as $line) {     
+      if ($line->type == 'shipping') {
+        $order->total_shipping = $line->commerce_total['amount']  / 100;
+        $order->carrier_tax_rate = '';
+        $order->livreur = $line->line_item_label;        
+      } else {
+        $total_products += $line->commerce_total['amount']  / 100;
+        $total_products_wt += $line->quantity * $line->commerce_unit_price['data']['components'][0]['price']['amount'] / 100;
+      }
+    }
+    $order->date_add = date('d/m/Y', $result->created);
+    $order->total_products = $total_products;
+    $order->total_products_wt = $total_products_wt;
+        
+    unset($result->created);
+    unset($result->commerce_line_items);
+    unset($result->commerce_line_items_entities);
+    unset($result->data);
+    unset($result->commerce_order_total);
+    unset($result->commerce_customer_billing);
+    unset($result->commerce_customer_shipping);
+    unset($result->commerce_discounts);
+    
+    $result->order = $order;
+  }
+  
+//   dd($result);  
+}
