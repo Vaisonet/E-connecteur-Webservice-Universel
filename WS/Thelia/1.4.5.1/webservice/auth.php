@@ -1,0 +1,2 @@
+<?php
+define('AUTH_KEY', '9T84N4781687Jo1Jx6jv4O661xPz97nA');
