@@ -1,7 +1,7 @@
 <?php
 //@todo mettre sur la ligne suivante les statuts de la commande à tester
 
-$filtre = '1,2';
+$filtre = 'created';
 
 require '../config.php';
 require '../libs/functions.php';

@@ -1,6 +1,9 @@
-SDK webservice générique E-connecteur
+Kit de développement webservice universel E-connecteur
 
-Cette archive contient des tests permettant de simuler les appels au webservice développé selon la documentation :
+Le logiciel Vaisonet E-connecteur supporte plusieurs webservices nativement, comme Prestashop, Magento, Woocommerce.
+Pour les autres CMS, comme Joomla Hikashop, Joomla Virtuemarkt, Drupal Commerce, Thelia, etc ... vous devez, si vous souhaitez utiliser E-connecteur, implémenter un webservice répondant aux spécifications E-connecteur.
+
+Cette archive contient des tests (sous-dossier WSTests) permettant de simuler les appels au webservice développé selon la documentation :
  - "Spécifications techniques webservice e-commerce générique e-connecteur 5.9"
  - "Spécifications techniques webservice e-commerce générique e-connecteur 5.8"
 
@@ -18,7 +21,13 @@ Ils sont prévus pour être lancé en ligne de commande avec php 5.4 ou supérie
 La réponse du webservice est validée à l'aide des fichiers XSD se trouvant dans le dossier XSD.
 En cas de différence avec le format prévu, une alerte php est affichée.
 
-Pour toute assistance, vous pouvez consulter notre base de connaissance : http://assistance.e-connecteur.fr
-Ou contacter le service technique par email : support@vaisonet.com ou 
+Nous proposons également des exemples d'implémentation du webservice universel E-connecteur pour différents CMS, dans le sous-dossier WS.
+Ces scripts sont là à titre d'exemple d'implémentation. Il ne s'agit pas de logiciel ou de script supportés par notre équipe, mais vous pouvez les réutiliser comme base de vos développements.
 
-© 2015 Vaisonet
+Si vous souhaitez développer et publier un plugin spécifique à un CMS e-commerce, n'hésitez pas à contacter notre équipe, nous serions ravi de mettre en place un partenariat.
+
+
+Pour toute assistance, vous pouvez consulter notre base de connaissance : https://assistance.e-connecteur.fr
+Ou contacter le service technique par email : support@vaisonet.com
+
+© 2015-2017 Vaisonet

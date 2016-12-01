@@ -39,12 +39,12 @@
 	    <xs:element type="xs:string" name="city"/>
 	    <xs:element type="xs:string" name="phone"/>
 	    <xs:element type="xs:string" name="phone_mobile"/>
-	    <xs:element type="xs:string" name="vat_number"/>
+	    <xs:element type="xs:string" name="vat_number" minOccurs="0"/>
 	</xs:sequence>
     </xs:complexType>
     <xs:complexType name="clientType">
 	<xs:sequence>
-	    <xs:element type="xs:byte" name="id"/>
+	    <xs:element type="xs:unsignedInt" name="id"/>
 	    <xs:element type="xs:string" name="lastname"/>
 	    <xs:element type="xs:string" name="firstname"/>
 	    <xs:element type="xs:string" name="email"/>

@@ -20,7 +20,7 @@ $opt['data'] = '<?xml version="1.0"?>
 				<meta_title>Mon méta titre</meta_title>
 				<desc_longue>Ma description longue bla bla éàù</desc_longue>
 				<desc_courte>Ma description courte bla bla éàù</desc_courte>
-				<tva>20.00</tva>
+				<tva>5.50</tva>
 				<ecotaxe>0</ecotaxe>
 				<stock>1540</stock>
 				<poids>12.01</poids>
