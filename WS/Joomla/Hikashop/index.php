@@ -2,7 +2,7 @@
 ini_set('display_errors', 'On');
 require 'rest.php';
 
-define('JPATH_PLATFORM', dirname(dirname(__FILE__).'../'));
+define('JPATH_PLATFORM', dirname(dirname(__FILE__).'../').'/libraries');
 
 
 $xml_string = stripslashes($_POST['data']);

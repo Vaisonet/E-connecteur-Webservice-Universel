@@ -1,2 +1,1 @@
-<?php
-define('AUTH_KEY', 'VOTRE CLEF');
+<?phpdefine('AUTH_KEY', 'VOTRE CLEF');

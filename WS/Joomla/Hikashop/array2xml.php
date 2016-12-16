@@ -96,6 +96,8 @@ class Array2XML {
             } else if(isset($arr['@cdata'])) {
                 $node->appendChild($xml->createCDATASection(self::bool2str($arr['@cdata'])));
 
+
+
                 unset($arr['@cdata']);    //remove the key from the array once done.
                 //return from recursion, as a note with cdata cannot have child nodes.
                 return $node;

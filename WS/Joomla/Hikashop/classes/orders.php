@@ -43,7 +43,8 @@ class orders extends REST_app {
 			
 			$order_arr = array(
 				'reference' => $order['order_number'],
-				'date_add'=>date('Y-m-d H:i:s', $order['order_created']),
+				//'date_add'=>date('Y-m-d H:i:s', $order['order_created']),
+				'date_add'=>date('d/m/Y', $order['order_created']),
 				'payment' => $order['order_payment_method'],
 				'total_discounts' => round($order['order_discount_price']+$order['order_discount_tax'], 2),
 				'total_paid' => round($order['order_full_price'], 2),
